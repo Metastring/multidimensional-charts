@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BubbleChart from './BubbleChart';
+import { BubbleChart } from '../';
 
 export default {
   title: 'Example/BubbleChart',
