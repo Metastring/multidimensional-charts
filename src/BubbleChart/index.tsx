@@ -20,11 +20,11 @@ type DataElementType = {
 
 export declare interface BubbleChartProps {
   data: DataElementType[];
-  xTicks: number;
-  dateParam: string;
-  yParam: string;
-  colorParam: string;
-  sizeParam: string;
+  xTicks?: number;
+  dateParam?: string;
+  yParam?: string;
+  colorParam?: string;
+  sizeParam?: string;
 }
 
 export const BubbleChart = ({
