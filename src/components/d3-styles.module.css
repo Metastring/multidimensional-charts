@@ -1,0 +1,22 @@
+.tooltip {
+    position: absolute;
+    z-index: 1070;
+    display: block;
+}
+
+.bubbles {
+    stroke: white;
+}
+
+.bubbles:hover {
+    stroke: black;
+}
+
+.container {
+    display: inline-block;
+	position: relative;
+	width: 100%;
+	padding-bottom: 100%; 
+	vertical-align: middle; 
+	overflow: hidden; 
+}
