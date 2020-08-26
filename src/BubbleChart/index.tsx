@@ -70,12 +70,6 @@ export const BubbleChart = ({
         .enter()
         .append(`g`)
         .attr(`class`, `graphContainer`)
-        .style(`display`, `inline-block`)
-        .style(`position`, `relative`)
-        .style(`width`, `100%`)
-        .style(`padding-bottom`, `100%`)
-        .style(`vertical-align`, `middle`)
-        .style(`overflow`, `hidden`)
         .style(`font`, `14px`)
         .attr(`transform`, `translate(${margin.left}, ${margin.top})`);
 
@@ -166,5 +160,5 @@ export const BubbleChart = ({
     }
   }, [data, dateParam, yParam, sizeParam, colorParam]);
 
-  return <svg ref={d3container}></svg>;
+  return <svg height="90vh" width="90%" ref={d3container}></svg>;
 };
