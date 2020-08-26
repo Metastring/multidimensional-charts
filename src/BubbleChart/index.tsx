@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
+import { Numeric } from 'd3';
 
 const {
   select,
@@ -14,30 +15,48 @@ const {
   schemeSet2,
 } = d3;
 
+type InputDataType = Numeric;
+type PlottableDataType = Numeric;
+
 type DataElementType = {
-  [key: string]: string;
+  [key: string]: InputDataType;
 };
 
+type PlottableAdapterFunction = (input: DataElementType) => PlottableDataType;
 export declare interface BubbleChartProps {
   data: DataElementType[];
-  xTicks?: number;
   dateParam?: string;
   yParam?: string;
-  colorParam?: string;
   sizeParam?: string;
+  colorParam?: string;
 }
+
+type PlottableAdapterFunctionFromKey = (
+  key: string
+) => PlottableAdapterFunction;
+
+const identityFunctionFactory: PlottableAdapterFunctionFromKey = key => d =>
+  d[key];
+const parseDateFactory: PlottableAdapterFunctionFromKey = key => d =>
+  new Date(d[key] as number | string);
+const parseNumberFactory: PlottableAdapterFunctionFromKey = key => d =>
+  parseInt(d[key].toString());
 
 export const BubbleChart = ({
   data,
-  xTicks = 5,
-  dateParam = `duration.start`,
-  yParam = `entity.state`,
-  colorParam = `indicator`,
-  sizeParam = `value`,
+  dateParam = 'duration.start',
+  yParam = 'entity.state',
+  colorParam = 'indicator_normalized',
+  sizeParam = 'value',
 }: BubbleChartProps) => {
   const d3container = useRef(null);
 
   useEffect(() => {
+    const xTicks = 5;
+    const dateParseFunction = parseDateFactory(dateParam);
+    const yParseFunction = identityFunctionFactory(yParam);
+    const sizeParseFunction = parseNumberFactory(sizeParam);
+    const colorParseFunction = identityFunctionFactory(colorParam);
     if (data && d3container.current) {
       const margin = { top: 10, right: 30, bottom: 30, left: 40 };
       const width = 200;
@@ -61,12 +80,15 @@ export const BubbleChart = ({
 
       const svg = select(`g.graphContainer`);
 
-      const minDate = min(data.map(d => new Date(d[dateParam]))) ?? new Date(0);
-      const maxDate = max(data.map(d => new Date(d[dateParam]))) ?? new Date();
-      const padding = (maxDate?.getTime() - minDate?.getTime()) * 0.05;
+      const minX =
+        (min<InputDataType>(data.map(dateParseFunction)) as Date) ??
+        new Date(0);
+      const maxX =
+        (max<InputDataType>(data.map(dateParseFunction)) as Date) ?? new Date();
+      const padding = (maxX?.getTime() - minX?.getTime()) * 0.05;
 
-      const minDomainDate = new Date(minDate.getTime() - padding);
-      const maxDomainDate = new Date(maxDate.getTime() + padding);
+      const minDomainDate = new Date(minX.getTime() - padding);
+      const maxDomainDate = new Date(maxX.getTime() + padding);
 
       const x = scaleTime()
         .domain([minDomainDate, maxDomainDate])
@@ -95,7 +117,7 @@ export const BubbleChart = ({
       );
 
       const y = scalePoint()
-        .domain(data.map(d => d[yParam]))
+        .domain((data.map(yParseFunction) as unknown) as string[])
         .range([height - margin.bottom, 0])
         .padding(1);
 
@@ -112,14 +134,14 @@ export const BubbleChart = ({
         axisLeft(y).ticks(4)
       );
 
-      const sizeParamMax = max(data.map(d => parseInt(d[sizeParam])));
+      const sizeParamMax = max(data.map(sizeParseFunction));
       const zDomainMax = sizeParamMax || 1000;
       const z = scaleLog()
         .domain([1, zDomainMax])
         .range([1, 4]);
 
       const color = scaleOrdinal()
-        .domain(data.map(d => d[colorParam]) as string[])
+        .domain((data.map(colorParseFunction) as unknown) as string[])
         .range(schemeSet2);
 
       const update = svg
@@ -132,12 +154,13 @@ export const BubbleChart = ({
         .merge(update)
         .attr(`class`, `dot bubble`)
         .style(`stroke`, `none`)
-        .attr(`cx`, function(d) {
-          return x(new Date(d[dateParam]));
-        })
-        .attr(`cy`, d => y(d[yParam]) as number)
-        .attr(`r`, d => z(parseInt(d[sizeParam])) as number)
-        .style(`fill`, d => color(d[colorParam]) as string)
+        .attr(`cx`, d => x(dateParseFunction(d)))
+        .attr(`cy`, d => y((yParseFunction(d) as unknown) as string) as number)
+        .attr(`r`, d => z(sizeParseFunction(d)) as number)
+        .style(
+          `fill`,
+          d => color((colorParseFunction(d) as unknown) as string) as string
+        )
         .style(`opacity`, `0.7`)
         .attr(`stroke`, `black`)
         .transition();
@@ -146,7 +169,7 @@ export const BubbleChart = ({
 
       svg.selectAll(`.dot.bubble:hover`).style(`stroke`, `black`);
     }
-  }, [data, xTicks, dateParam, yParam, sizeParam, colorParam]);
+  }, [data, dateParam, yParam, sizeParam, colorParam]);
 
   return <svg ref={d3container}></svg>;
 };
