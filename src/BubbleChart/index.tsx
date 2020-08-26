@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 import * as d3 from 'd3';
-import { Numeric } from 'd3';
 
 const {
   select,
@@ -15,14 +14,16 @@ const {
   schemeSet2,
 } = d3;
 
-type InputDataType = Numeric;
-type PlottableDataType = Numeric;
+type InputDataType = string | number | Date;
+type PlottableDataType = string | number | Date;
 
 type DataElementType = {
   [key: string]: InputDataType;
 };
 
-type PlottableAdapterFunction = (input: DataElementType) => PlottableDataType;
+type PlottableAdapterFunction<T extends PlottableDataType> = (
+  input: DataElementType
+) => T;
 export declare interface BubbleChartProps {
   data: DataElementType[];
   dateParam?: string;
@@ -31,15 +32,15 @@ export declare interface BubbleChartProps {
   colorParam?: string;
 }
 
-type PlottableAdapterFunctionFromKey = (
+type PlottableAdapterFunctionFromKey<T extends PlottableDataType> = (
   key: string
-) => PlottableAdapterFunction;
+) => PlottableAdapterFunction<T>;
 
-const identityFunctionFactory: PlottableAdapterFunctionFromKey = key => d =>
+const identityFunctionFactory: PlottableAdapterFunctionFromKey<PlottableDataType> = key => d =>
   d[key];
-const parseDateFactory: PlottableAdapterFunctionFromKey = key => d =>
+const parseDateFactory: PlottableAdapterFunctionFromKey<Date> = key => d =>
   new Date(d[key] as number | string);
-const parseNumberFactory: PlottableAdapterFunctionFromKey = key => d =>
+const parseNumberFactory: PlottableAdapterFunctionFromKey<number> = key => d =>
   parseInt(d[key].toString());
 
 export const BubbleChart = ({
@@ -80,11 +81,8 @@ export const BubbleChart = ({
 
       const svg = select(`g.graphContainer`);
 
-      const minX =
-        (min<InputDataType>(data.map(dateParseFunction)) as Date) ??
-        new Date(0);
-      const maxX =
-        (max<InputDataType>(data.map(dateParseFunction)) as Date) ?? new Date();
+      const minX = min<Date>(data.map(dateParseFunction)) ?? new Date(0);
+      const maxX = max<Date>(data.map(dateParseFunction)) ?? new Date();
       const padding = (maxX?.getTime() - minX?.getTime()) * 0.05;
 
       const minDomainDate = new Date(minX.getTime() - padding);
@@ -117,7 +115,7 @@ export const BubbleChart = ({
       );
 
       const y = scalePoint()
-        .domain((data.map(yParseFunction) as unknown) as string[])
+        .domain(data.map(yParseFunction) as string[])
         .range([height - margin.bottom, 0])
         .padding(1);
 
@@ -141,7 +139,7 @@ export const BubbleChart = ({
         .range([1, 4]);
 
       const color = scaleOrdinal()
-        .domain((data.map(colorParseFunction) as unknown) as string[])
+        .domain(data.map(colorParseFunction) as string[])
         .range(schemeSet2);
 
       const update = svg
@@ -155,12 +153,9 @@ export const BubbleChart = ({
         .attr(`class`, `dot bubble`)
         .style(`stroke`, `none`)
         .attr(`cx`, d => x(dateParseFunction(d)))
-        .attr(`cy`, d => y((yParseFunction(d) as unknown) as string) as number)
+        .attr(`cy`, d => y(yParseFunction(d) as string) as number)
         .attr(`r`, d => z(sizeParseFunction(d)) as number)
-        .style(
-          `fill`,
-          d => color((colorParseFunction(d) as unknown) as string) as string
-        )
+        .style(`fill`, d => color(colorParseFunction(d) as string) as string)
         .style(`opacity`, `0.7`)
         .attr(`stroke`, `black`)
         .transition();

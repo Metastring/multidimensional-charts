@@ -10,7 +10,6 @@ export default {
   component: BubbleChart,
   argTypes: {
     data: { control: 'object' },
-    xTicks: { control: 'number' },
     dateParam: { control: 'text' },
     yParam: { control: 'text' },
     colorParam: { control: 'text' },
@@ -60,7 +59,6 @@ Sample.args = {
       'entity.state': 'Karnataka',
     },
   ],
-  xTicks: 5,
   dateParam: 'duration.start',
   yParam: 'entity.state',
   colorParam: 'indicator',
