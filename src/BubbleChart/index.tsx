@@ -65,11 +65,11 @@ export const BubbleChart = ({
     const colorParseFunction = identityFunctionFactory(colorParam);
     if (data && d3container.current) {
       const margin = { top: 10, right: 30, bottom: 30, left: 40 };
-      const width = 200;
-      const height = 200;
+      const width = 600;
+      const height = 300;
 
       select(d3container.current)
-        .attr(`viewBox`, `0 0 ${height} ${width}`)
+        .attr(`viewBox`, `0 0 ${width} ${height}`)
         .selectAll(`g.graphContainer`)
         .data([null])
         .enter()
@@ -97,7 +97,6 @@ export const BubbleChart = ({
         .enter()
         .append<SVGGElement>(`g`)
         .attr(`class`, `xAxis`)
-        .style(`font-size`, `3px`)
         .attr(`transform`, `translate(0, ${height - margin.bottom})`)
         .exit()
         .remove();
@@ -124,7 +123,6 @@ export const BubbleChart = ({
         .enter()
         .append(`g`)
         .attr(`class`, `yAxis`)
-        .style(`font-size`, `3px`)
         .attr(`transform`, `translate(0, 0)`);
 
       select<SVGGElement, DataElementType>(`g.yAxis`).call(
