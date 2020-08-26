@@ -64,3 +64,49 @@ Sample.args = {
   colorParam: 'indicator',
   sizeParam: 'value',
 };
+
+export const Sample2 = Template.bind({});
+Sample2.args = {
+  data: [
+    {
+      'duration.start': '2020-05-01',
+      indicator: 'Dengue',
+      value: '400',
+      'entity.state': 'Kerala',
+    },
+    {
+      'duration.start': '2020-02-04',
+      indicator: 'Dengue',
+      value: '100',
+      'entity.state': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-09-24',
+      indicator: 'Dengue',
+      value: '1',
+      'entity.state': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-05-04',
+      indicator: 'Dengue',
+      value: '50',
+      'entity.state': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-03-04',
+      indicator: 'Dengue',
+      value: '70',
+      'entity.state': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-01-04',
+      indicator: 'Dengue',
+      value: '500',
+      'entity.state': 'Karnataka',
+    },
+  ],
+  dateParam: 'duration.start',
+  yParam: 'entity.state',
+  colorParam: 'indicator',
+  sizeParam: 'value',
+};
