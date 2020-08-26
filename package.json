@@ -33,7 +33,7 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "multidimensional-charts",
+  "name": "@metastring/multidimensional-charts",
   "author": "Akshay S Dinesh",
   "module": "dist/multidimensional-charts.esm.js",
   "devDependencies": {

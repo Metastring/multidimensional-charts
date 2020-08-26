@@ -61,6 +61,7 @@ Sample.args = {
     },
   ],
   xTicks: 5,
+  dateParam: 'duration.start',
   yParam: 'entity.state',
   colorParam: 'indicator',
   sizeParam: 'value',
