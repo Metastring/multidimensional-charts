@@ -12,7 +12,12 @@ const {
   scaleLog,
   scaleOrdinal,
   schemeSet2,
+  transition,
 } = d3;
+
+if (typeof transition === 'function') {
+  // there is nothing to do. Just that typescript thinks we can't do things to fix bugs.
+}
 
 type InputDataType = string | number | Date;
 type PlottableDataType = string | number | Date;
@@ -141,20 +146,24 @@ export const BubbleChart = ({
         .data<DataElementType>(data);
 
       update
+        .exit()
+        .transition()
+        .duration(750)
+        .remove();
+
+      update
         .enter()
         .append<SVGCircleElement>(`circle`)
         .merge(update)
+        .transition()
+        .duration(750)
         .attr(`class`, `dot bubble`)
         .style(`stroke`, `none`)
         .attr(`cx`, d => x(dateParseFunction(d)))
         .attr(`cy`, d => y(yParseFunction(d) as string) as number)
         .attr(`r`, d => z(sizeParseFunction(d)) as number)
         .style(`fill`, d => color(colorParseFunction(d) as string) as string)
-        .style(`opacity`, `0.7`)
-        .attr(`stroke`, `black`)
-        .transition();
-
-      update.exit().remove();
+        .style(`opacity`, `0.7`);
 
       svg.selectAll(`.dot.bubble:hover`).style(`stroke`, `black`);
     }
