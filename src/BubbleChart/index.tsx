@@ -64,7 +64,7 @@ export const BubbleChart = ({
     const sizeParseFunction = parseNumberFactory(sizeParam);
     const colorParseFunction = identityFunctionFactory(colorParam);
     if (data && d3container.current) {
-      const margin = { top: 10, right: 30, bottom: 30, left: 40 };
+      const margin = { top: 10, right: 10, bottom: 30, left: 100 };
       const width = 600;
       const height = 300;
 
@@ -167,5 +167,9 @@ export const BubbleChart = ({
     }
   }, [data, dateParam, yParam, sizeParam, colorParam]);
 
-  return <svg height="90vh" width="90%" ref={d3container}></svg>;
+  return (
+    <object type="image/svg+xml">
+      <svg height="90vh" width="100%" ref={d3container}></svg>
+    </object>
+  );
 };
