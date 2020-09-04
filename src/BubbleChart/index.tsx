@@ -33,6 +33,7 @@ export declare interface BubbleChartProps {
   data: DataElementType[];
   dateParam?: string;
   yParam?: string;
+  yDomain: string[];
   sizeParam?: string;
   colorParam?: string;
 }
@@ -52,6 +53,7 @@ export const BubbleChart = ({
   data,
   dateParam = 'duration.start',
   yParam = 'entity.state',
+  yDomain,
   colorParam = 'indicator_normalized',
   sizeParam = 'value',
 }: BubbleChartProps) => {
@@ -113,7 +115,7 @@ export const BubbleChart = ({
       );
 
       const y = scalePoint()
-        .domain(data.map(yParseFunction) as string[])
+        .domain(yDomain ?? (data.map(yParseFunction) as string[]))
         .range([height - margin.bottom, 0])
         .padding(1);
 
@@ -165,7 +167,7 @@ export const BubbleChart = ({
 
       svg.selectAll(`.dot.bubble:hover`).style(`stroke`, `black`);
     }
-  }, [data, dateParam, yParam, sizeParam, colorParam]);
+  }, [data, dateParam, yParam, yDomain, sizeParam, colorParam]);
 
   return (
     <object type="image/svg+xml">
