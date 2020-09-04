@@ -77,7 +77,8 @@ export const BubbleChart = ({
         .enter()
         .append(`g`)
         .attr(`class`, `graphContainer`)
-        .style(`font`, `14px`)
+        .style(`font-size`, `14px`)
+        .style(`font-family`, `Roboto sans-serif`)
         .attr(`transform`, `translate(${margin.left}, ${margin.top})`);
 
       const svg = select(`g.graphContainer`);
@@ -171,7 +172,14 @@ export const BubbleChart = ({
 
   return (
     <object type="image/svg+xml">
-      <svg height="90vh" width="100%" ref={d3container}></svg>
+      <svg height="80vh" width="100%" ref={d3container}>
+        <defs>
+          <style type="text/css">
+            @import
+            url('https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic');
+          </style>
+        </defs>
+      </svg>
     </object>
   );
 };
