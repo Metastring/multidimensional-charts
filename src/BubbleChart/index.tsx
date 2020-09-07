@@ -11,7 +11,7 @@ const {
   scalePoint,
   scaleLog,
   scaleOrdinal,
-  schemeSet2,
+  schemeCategory10,
   transition,
 } = d3;
 
@@ -140,7 +140,7 @@ export const BubbleChart = ({
 
       const color = scaleOrdinal()
         .domain(data.map(colorParseFunction) as string[])
-        .range(schemeSet2);
+        .range(schemeCategory10);
 
       const update = svg
         .selectAll<SVGCircleElement, DataElementType>(`.dot`)
