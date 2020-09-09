@@ -66,9 +66,9 @@ export const BubbleChart = ({
     const sizeParseFunction = parseNumberFactory(sizeParam);
     const colorParseFunction = identityFunctionFactory(colorParam);
     if (data && d3container.current) {
-      const margin = { top: 10, right: 10, bottom: 30, left: 100 };
-      const width = 600;
-      const height = 300;
+      const margin = { top: 10, right: 10, bottom: 30, left: 110 };
+      const width = 954;
+      const height = 500;
 
       select(d3container.current)
         .attr(`viewBox`, `0 0 ${width} ${height}`)
@@ -170,16 +170,5 @@ export const BubbleChart = ({
     }
   }, [data, dateParam, yParam, yDomain, sizeParam, colorParam]);
 
-  return (
-    <object type="image/svg+xml">
-      <svg height="80vh" width="100%" ref={d3container}>
-        <defs>
-          <style type="text/css">
-            @import
-            url('https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900,900italic');
-          </style>
-        </defs>
-      </svg>
-    </object>
-  );
+  return <svg height="100%" width="100%" ref={d3container} />;
 };
