@@ -2,15 +2,21 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BubbleChart } from '../.';
-import { Sample, Sample2 } from '../stories/BubbleChart.stories';
+import { Sample2, Sample3 } from '../stories/BubbleChart.stories';
 
 const App = () => {
   const transitionDelay = 3000;
-  const [args, setArgs] = React.useState(Sample.args);
+  const [args, setArgs] = React.useState(Sample2.args);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setArgs(Sample3.args);
+    }, transitionDelay);
+    return () => clearTimeout(timer);
+  }, []);
   React.useEffect(() => {
     const timer = setTimeout(() => {
       setArgs(Sample2.args);
-    }, transitionDelay);
+    }, transitionDelay * 2);
     return () => clearTimeout(timer);
   }, []);
   return (

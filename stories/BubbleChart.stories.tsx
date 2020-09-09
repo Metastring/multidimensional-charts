@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import { Meta, Story } from '@storybook/react/types-6-0';
 
@@ -90,6 +90,52 @@ Sample2.args = {
       'duration.start': '2020-05-04',
       indicator: 'Dengue',
       value: '50',
+      'entity.State': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-03-04',
+      indicator: 'Dengue',
+      value: '70',
+      'entity.State': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-01-04',
+      indicator: 'Dengue',
+      value: '500',
+      'entity.State': 'Karnataka',
+    },
+  ],
+  dateParam: 'duration.start',
+  yParam: 'entity.State',
+  colorParam: 'indicator',
+  sizeParam: 'value',
+};
+
+export const Sample3 = Template.bind({});
+Sample3.args = {
+  data: [
+    {
+      'duration.start': '2020-05-01',
+      indicator: 'Dengue',
+      value: '0',
+      'entity.State': 'Kerala',
+    },
+    {
+      'duration.start': '2020-02-04',
+      indicator: 'Dengue',
+      value: '0',
+      'entity.State': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-09-24',
+      indicator: 'Dengue',
+      value: '0',
+      'entity.State': 'Maharashtra',
+    },
+    {
+      'duration.start': '2020-05-04',
+      indicator: 'Dengue',
+      value: '0',
       'entity.State': 'Maharashtra',
     },
     {

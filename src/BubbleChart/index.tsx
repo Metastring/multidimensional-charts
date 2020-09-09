@@ -49,7 +49,7 @@ const identityFunctionFactory: PlottableAdapterFunctionFromKey<PlottableDataType
 const parseDateFactory: PlottableAdapterFunctionFromKey<Date> = key => d =>
   new Date(d[key] as number | string);
 const parseNumberFactory: PlottableAdapterFunctionFromKey<number> = key => d =>
-  parseInt(d[key].toString());
+  parseInt(d[key] as string);
 
 const tooltipFunctionDefault = (d: DataElementType) => {
   return `${d['entity.State']} - ${d['value']}`;
@@ -139,10 +139,10 @@ export const BubbleChart = ({
         axisLeft(y).ticks(4)
       );
 
-      const sizeParamMax = max(data.map(sizeParseFunction));
+      const sizeParamMax = max(data, sizeParseFunction);
       const zDomainMax = sizeParamMax || 1000;
       const z = scaleLog()
-        .domain([1, zDomainMax])
+        .domain([0.0000001, zDomainMax])
         .range([1, 4]);
 
       const color = scaleOrdinal()
@@ -192,34 +192,22 @@ export const BubbleChart = ({
           .style('opacity', 0);
       };
 
-      const update = svg
-        .selectAll<SVGCircleElement, DataElementType>(`.dot`)
-        .data<DataElementType>(data);
-
-      update
-        .exit()
-        .transition()
-        .duration(750)
-        .remove();
-
-      update
-        .enter()
-        .append<SVGCircleElement>(`circle`)
-        .merge(update)
+      svg
+        .selectAll<SVGCircleElement, DataElementType>(`circle`)
+        .data<DataElementType>(data)
+        .join<SVGCircleElement>(`circle`)
+        .attr(`class`, `dot`)
         .on('mouseover', showTooltip)
         .on('mousemove', moveTooltip)
         .on('mouseleave', hideTooltip)
         .transition()
         .duration(750)
-        .attr(`class`, `dot bubble`)
         .style(`stroke`, `none`)
         .attr(`cx`, d => x(dateParseFunction(d)))
         .attr(`cy`, d => y(yParseFunction(d) as string) as number)
-        .attr(`r`, d => z(sizeParseFunction(d)) as number)
+        .attr(`r`, d => (z(sizeParseFunction(d)) as number) || 0)
         .style(`fill`, d => color(colorParseFunction(d) as string) as string)
-        .style(`opacity`, `0.7`);
-
-      svg.selectAll(`.dot.bubble:hover`).style(`stroke`, `black`);
+        .style(`opacity`, `1`);
     }
   }, [
     data,
