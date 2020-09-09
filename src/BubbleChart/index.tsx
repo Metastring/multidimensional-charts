@@ -33,6 +33,7 @@ type PlottableAdapterFunction<T extends PlottableDataType> = (
 export declare interface BubbleChartProps {
   data: DataElementType[];
   dateParam?: string;
+  dateDomain?: Date[];
   yParam?: string;
   yDomain: string[];
   sizeParam?: string;
@@ -58,6 +59,7 @@ const tooltipFunctionDefault = (d: DataElementType) => {
 export const BubbleChart = ({
   data,
   dateParam = 'duration.start',
+  dateDomain,
   yParam = 'entity.State',
   yDomain,
   colorParam = 'indicator.id',
@@ -90,8 +92,14 @@ export const BubbleChart = ({
 
       const svg = select(`g.graphContainer`);
 
-      const minX = min<Date>(data.map(dateParseFunction)) ?? new Date(0);
-      const maxX = max<Date>(data.map(dateParseFunction)) ?? new Date();
+      const minX =
+        dateDomain?.[0] ??
+        min<DataElementType, Date>(data, dateParseFunction) ??
+        new Date(0);
+      const maxX =
+        dateDomain?.[1] ??
+        max<DataElementType, Date>(data, dateParseFunction) ??
+        new Date();
       const padding = (maxX?.getTime() - minX?.getTime()) * 0.05;
 
       const minDomainDate = new Date(minX.getTime() - padding);
@@ -212,6 +220,7 @@ export const BubbleChart = ({
   }, [
     data,
     dateParam,
+    dateDomain,
     yParam,
     yDomain,
     sizeParam,

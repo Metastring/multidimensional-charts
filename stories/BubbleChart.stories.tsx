@@ -60,6 +60,7 @@ Sample.args = {
     },
   ],
   dateParam: 'duration.start',
+  dateDomain: [new Date('2020-01-01'), new Date('2020-06-30')],
   yParam: 'entity.State',
   colorParam: 'indicator',
   sizeParam: 'value',
