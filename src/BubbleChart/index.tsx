@@ -13,6 +13,7 @@ const {
   scaleOrdinal,
   schemeCategory10,
   transition,
+  mouse,
 } = d3;
 
 if (typeof transition === 'function') {
@@ -36,6 +37,7 @@ export declare interface BubbleChartProps {
   yDomain: string[];
   sizeParam?: string;
   colorParam?: string;
+  tooltipFunction?: (d: DataElementType) => string;
 }
 
 type PlottableAdapterFunctionFromKey<T extends PlottableDataType> = (
@@ -49,13 +51,18 @@ const parseDateFactory: PlottableAdapterFunctionFromKey<Date> = key => d =>
 const parseNumberFactory: PlottableAdapterFunctionFromKey<number> = key => d =>
   parseInt(d[key].toString());
 
+const tooltipFunctionDefault = (d: DataElementType) => {
+  return `${d['entity.State']} - ${d['value']}`;
+};
+
 export const BubbleChart = ({
   data,
   dateParam = 'duration.start',
-  yParam = 'entity.state',
+  yParam = 'entity.State',
   yDomain,
-  colorParam = 'indicator_normalized',
+  colorParam = 'indicator.id',
   sizeParam = 'value',
+  tooltipFunction = tooltipFunctionDefault,
 }: BubbleChartProps) => {
   const d3container = useRef(null);
 
@@ -142,6 +149,49 @@ export const BubbleChart = ({
         .domain(data.map(colorParseFunction) as string[])
         .range(schemeCategory10);
 
+      svg
+        .selectAll(`g.tooltip`)
+        .data([null])
+        .enter()
+        .append(`g`)
+        .attr(`class`, `tooltip`)
+        .style(`opacity`, 0)
+        .style(`background-color`, `black`)
+        .style(`border-radius`, `5px`)
+        .style(`padding`, `10px`)
+        .style(`color`, `white`)
+        .attr(`transform`, `translate(0, 0)`);
+
+      const tooltip = select(`g.tooltip`);
+
+      const showTooltip = function(this: SVGCircleElement, d: DataElementType) {
+        tooltip.transition().duration(200);
+        tooltip
+          .style('opacity', 1)
+          .html('Country: ' + d.value)
+          .attr(
+            `transform`,
+            `translate(${mouse(this)[0] + 30} ${mouse(this)[1] + 30})`
+          );
+        tooltip
+          .selectAll('text')
+          .data([null])
+          .join('text')
+          .text(`${tooltipFunction(d)}`);
+      };
+      const moveTooltip = function(this: SVGCircleElement, _d: any) {
+        tooltip.attr(
+          `transform`,
+          `translate(${mouse(this)[0] + 30} ${mouse(this)[1] + 30})`
+        );
+      };
+      const hideTooltip = function(_d: any) {
+        tooltip
+          .transition()
+          .duration(200)
+          .style('opacity', 0);
+      };
+
       const update = svg
         .selectAll<SVGCircleElement, DataElementType>(`.dot`)
         .data<DataElementType>(data);
@@ -156,6 +206,9 @@ export const BubbleChart = ({
         .enter()
         .append<SVGCircleElement>(`circle`)
         .merge(update)
+        .on('mouseover', showTooltip)
+        .on('mousemove', moveTooltip)
+        .on('mouseleave', hideTooltip)
         .transition()
         .duration(750)
         .attr(`class`, `dot bubble`)
@@ -168,7 +221,15 @@ export const BubbleChart = ({
 
       svg.selectAll(`.dot.bubble:hover`).style(`stroke`, `black`);
     }
-  }, [data, dateParam, yParam, yDomain, sizeParam, colorParam]);
+  }, [
+    data,
+    dateParam,
+    yParam,
+    yDomain,
+    sizeParam,
+    colorParam,
+    tooltipFunction,
+  ]);
 
   return <svg height="100%" width="100%" ref={d3container} />;
 };
