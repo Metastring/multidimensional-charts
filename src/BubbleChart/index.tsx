@@ -170,27 +170,39 @@ export const BubbleChart = ({
         .style(`color`, `white`)
         .attr(`transform`, `translate(0, 0)`);
 
-      const tooltip = select(`g.tooltip`);
+      const tooltip = select<SVGGElement, any>(`g.tooltip`);
+
+      const getTooltipLocationFor = (
+        tooltip: d3.Selection<SVGGElement, any, HTMLElement, any>,
+        element: SVGCircleElement
+      ) => {
+        const [x, y]: number[] = mouse(element);
+        const width = tooltip.node()!.getBBox().width;
+        return x < 400
+          ? `${x + 30} ${y + 30}`
+          : `${x - (30 + width)} ${y + 30}`;
+      };
 
       const showTooltip = function(this: SVGCircleElement, d: DataElementType) {
         tooltip.transition().duration(200);
-        tooltip
-          .style('opacity', 1)
-          .html('Country: ' + d.value)
-          .attr(
-            `transform`,
-            `translate(${mouse(this)[0] + 30} ${mouse(this)[1] + 30})`
-          );
+
         tooltip
           .selectAll('text')
           .data([null])
           .join('text')
           .text(`${tooltipFunction(d)}`);
+
+        tooltip
+          .style('opacity', 1)
+          .attr(
+            `transform`,
+            `translate(${getTooltipLocationFor(tooltip, this)})`
+          );
       };
       const moveTooltip = function(this: SVGCircleElement, _d: any) {
         tooltip.attr(
           `transform`,
-          `translate(${mouse(this)[0] + 30} ${mouse(this)[1] + 30})`
+          `translate(${getTooltipLocationFor(tooltip, this)})`
         );
       };
       const hideTooltip = function(_d: any) {
