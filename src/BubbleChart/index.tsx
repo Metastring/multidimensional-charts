@@ -9,7 +9,7 @@ const {
   axisLeft,
   scaleTime,
   scalePoint,
-  scaleLog,
+  scaleLinear,
   scaleOrdinal,
   schemeCategory10,
   transition,
@@ -149,9 +149,9 @@ export const BubbleChart = ({
 
       const sizeParamMax = max(data, sizeParseFunction);
       const zDomainMax = sizeParamMax || 1000;
-      const z = scaleLog()
-        .domain([0.0000001, zDomainMax])
-        .range([1, 4]);
+      const z = scaleLinear()
+        .domain([0, zDomainMax])
+        .range([3, 9]);
 
       const color = scaleOrdinal()
         .domain(data.map(colorParseFunction) as string[])
